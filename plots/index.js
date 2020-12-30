@@ -2,40 +2,27 @@ rpmElement = document.querySelector('#rpm') ;
 distance = document.querySelector('#distance') ;
 heatmap = document.querySelector('#heatmap') ;
 date = document.querySelector('#date') ;
+name = document.querySelector('#name') ;
 let divs = [rpmElement, distance, heatmap]
 
 // get queries from URL
 const urlParams = new URLSearchParams(window.location.search);
 const currentDate = urlParams.get('date');
+const currentName = urlParams.get('name') ;
 const graphsQ = urlParams.get('graphs').toLowerCase().split(','); // array of plots to present 
-graphsQ.forEach(g => document.querySelector(`#${g}`).style.display = 'block') ;
-date.innerHTML = `<strong>Date: </srong>${currentDate}`
+graphsQ.forEach(g => document.querySelector(`#${g}`).style.display = 'block') ; // display the only graphs that send in url
+date.innerHTML = `<strong>Date: </strong>${currentDate}` ;
+name.innerHTML = `ddddd` ;
 
-
-Plotly.d3.csv('./data/data_example.csv', (err, rows) => {
-    setY = Yparameter => {
-        return {
-            name: Yparameter,
-            x: rows.map(r => r.TimeStamp),
-            y: rows.map(r => r[Yparameter])
-        }
-    }
-    let data = [ setY('MovementFast'), setY('ObjectDistance')];
-    Plotly.plot(distance, data) ;
-    distance.on('plotly_relayout',(eventdata) => {  
-        relayout(eventdata, divs)
-})
-})
-
-
-Plotly.d3.csv('./data/data_example.csv', (err, rows) => {
+// rpm/cartidge  plots
+Plotly.d3.csv('../data/data_example.csv', (err, rows) => {
     RPMdata = 
         {
             name: "RPM",
             x: rows.map(r => r.TimeStamp),
             y: rows.map(r => r['RPM']),
         } ;
-        Plotly.d3.csv('./data/treatment-example.csv', (err, rows) => {
+        Plotly.d3.csv('../data/treatment-example.csv', (err, rows) => {
             cartidge = {
                 name: "cartridge",
                 x: rows.map(r => r.Time),
@@ -45,13 +32,31 @@ Plotly.d3.csv('./data/data_example.csv', (err, rows) => {
                 hoverongaps: false,
                 z: rows.map(r => r['cartridge number'])
             }
-            
-            Plotly.plot(rpmElement, [RPMdata, cartidge]) ;
+            let layout = {title: 'RPM/Cartridge'}
+            Plotly.plot(rpmElement, [RPMdata, cartidge], layout) ;
             rpmElement.on('plotly_relayout',(eventdata) => {  
                 relayout(eventdata, divs)
         })
 })
 })
+
+// Movement Fast/Object Distance plots
+Plotly.d3.csv('../data/data_example.csv', (err, rows) => {
+    setY = Yparameter => {
+        return {
+            name: Yparameter,
+            x: rows.map(r => r.TimeStamp),
+            y: rows.map(r => r[Yparameter])
+        }
+    }
+    let layout = {title: 'Movement Fast/Object Distance'}
+    let data = [ setY('MovementFast'), setY('ObjectDistance')];
+    Plotly.plot(distance, data, layout) ;
+    distance.on('plotly_relayout',(eventdata) => {  
+        relayout(eventdata, divs)
+})
+})
+
 
 function relayout(ed, divs) {
     divs.forEach((div, i) => {
@@ -70,7 +75,7 @@ function relayout(ed, divs) {
 
 // heatMap 
 
-Plotly.d3.csv('./data/phase-example.csv', (err, rows) => {
+Plotly.d3.csv('../data/phase-example.csv', (err, rows) => {
     if(err) console.log("ERROR ==> ", err)
     let keys = Object.keys(rows[0]) ;
     zIndex  = [];

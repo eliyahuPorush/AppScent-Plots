@@ -4,6 +4,7 @@ let graphsCard = document.querySelector('.graphs') ;
 let date = document.querySelector('.date') ;
 let checkboxInputs = document.querySelector('.form-check-input') ;
 let result = document.querySelector('.result') ;
+let name = document.querySelector('#name')
 
 checkboxInputs.addEventListener('change',el => {
     console.log(el, "ff");
@@ -29,5 +30,5 @@ checkboxInputs.addEventListener('change',el => {
 
   function goClicked(e){
     e.preventDefault() ;
-    window.location.href = `../index.html?graphs=${graphs.join(',')}&date=${date.value}` ;
+    window.location.href = `../plots/index.html?graphs=${graphs.join(',')}&date=${date.value}&name=${name.value}` ;
   }
