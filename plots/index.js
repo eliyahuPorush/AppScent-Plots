@@ -1,8 +1,8 @@
-rpmElement = document.querySelector('#rpm') ;
-distance = document.querySelector('#distance') ;
-heatmap = document.querySelector('#heatmap') ;
-date = document.querySelector('#date') ;
-name = document.querySelector('#name') ;
+let rpmElement = document.querySelector('#rpm') ;
+let distance = document.querySelector('#distance') ;
+let heatmap = document.querySelector('#heatmap') ;
+let date = document.querySelector('#date') ;
+let name = document.querySelector('#name') ;
 let divs = [rpmElement, distance, heatmap]
 
 // get queries from URL
@@ -11,8 +11,8 @@ const currentDate = urlParams.get('date');
 const currentName = urlParams.get('name') ;
 const graphsQ = urlParams.get('graphs').toLowerCase().split(','); // array of plots to present 
 graphsQ.forEach(g => document.querySelector(`#${g}`).style.display = 'block') ; // display the only graphs that send in url
-date.innerHTML = `<strong>Date: </strong>${currentDate}` ;
-name.innerHTML = `ddddd` ;
+date.innerHTML = `<strong>Date: </strong>${currentDate} ` ;
+name.innerHTML =  `<strong>Name: </strong>${currentName}` ;
 
 // rpm/cartidge  plots
 Plotly.d3.csv('../data/data_example.csv', (err, rows) => {

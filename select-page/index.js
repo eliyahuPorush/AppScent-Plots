@@ -1,5 +1,6 @@
 let graphs = ['RPM', 'Distance', 'HeatMap']  ;
 let dateCard = document.querySelector('.date-card') ;
+let nameCard = document.querySelector('.name-card') ;
 let graphsCard = document.querySelector('.graphs') ;
 let date = document.querySelector('.date') ;
 let checkboxInputs = document.querySelector('.form-check-input') ;
@@ -14,6 +15,7 @@ checkboxInputs.addEventListener('change',el => {
   
   function dateChange(el){
     dateCard.innerHTML = `<strong>Date: </strong> ${el.target.value}` ;
+    nameCard.innerHTML = `<strong>Name: </strong> ${name.value}` ;
     graphsCard.innerHTML = `<strong>Graphs Selected: </strong> ${graphs}`
     result.style.display = 'inline';
   }
