@@ -1,7 +1,16 @@
-rpmElement = document.querySelector('#RPM') ;
-tester = document.querySelector('#tester') ;
+rpmElement = document.querySelector('#rpm') ;
+distance = document.querySelector('#distance') ;
+heatmap = document.querySelector('#heatmap') ;
+date = document.querySelector('#date') ;
+let divs = [rpmElement, distance, heatmap]
 
-let divs = [rpmElement, tester]
+// get queries from URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentDate = urlParams.get('date');
+const graphsQ = urlParams.get('graphs').toLowerCase().split(','); // array of plots to present 
+graphsQ.forEach(g => document.querySelector(`#${g}`).style.display = 'block') ;
+date.innerHTML = `<strong>Date: </srong>${currentDate}`
+
 
 Plotly.d3.csv('./data/data_example.csv', (err, rows) => {
     setY = Yparameter => {
@@ -12,8 +21,8 @@ Plotly.d3.csv('./data/data_example.csv', (err, rows) => {
         }
     }
     let data = [ setY('MovementFast'), setY('ObjectDistance')];
-    Plotly.plot(tester, data) ;
-    tester.on('plotly_relayout',(eventdata) => {  
+    Plotly.plot(distance, data) ;
+    distance.on('plotly_relayout',(eventdata) => {  
         relayout(eventdata, divs)
 })
 })
@@ -24,14 +33,17 @@ Plotly.d3.csv('./data/data_example.csv', (err, rows) => {
         {
             name: "RPM",
             x: rows.map(r => r.TimeStamp),
-            y: rows.map(r => r['RPM'])
+            y: rows.map(r => r['RPM']),
         } ;
         Plotly.d3.csv('./data/treatment-example.csv', (err, rows) => {
             cartidge = {
                 name: "cartridge",
                 x: rows.map(r => r.Time),
-                y: rows.map(r => r['cartridge number']),
+                y: rows.map(r => 20),
                 mode: 'markers',
+                type: 'map',
+                hoverongaps: false,
+                z: rows.map(r => r['cartridge number'])
             }
             
             Plotly.plot(rpmElement, [RPMdata, cartidge]) ;
@@ -64,15 +76,10 @@ Plotly.d3.csv('./data/phase-example.csv', (err, rows) => {
     zIndex  = [];
     keys.forEach(key => { zIndex.push(rows.map(r => r[key]))}) // push every column as array 
     zIndex.splice(0,2) ;
-    console.log(zIndex);
     keys.splice(0,2) ;
     let times = rows.map(r => new Date(r.Time * 1000).toLocaleString()) 
-    // let uniq = [...new Set(times)];
-    // console.log(keys);
     hetmapdata = [{
         z: zIndex,
-        // x: times,
-        // z:[[1,2,3],[4,4,5],[3,3,4]],
         x: times,
         y: keys,
         type: 'heatmap' ,
@@ -83,6 +90,9 @@ Plotly.d3.csv('./data/phase-example.csv', (err, rows) => {
         title: "HeatMap",
         yaxis: {title: "Distance"}
     }
-    Plotly.plot('heatMap', hetmapdata, layout)
+    Plotly.plot(heatmap, hetmapdata, layout) ;
+    heatmap.on('plotly_relayout',(eventdata) => {  
+        relayout(eventdata, divs)
+})
 })
 

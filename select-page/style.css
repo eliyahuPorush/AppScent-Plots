@@ -1,3 +1,6 @@
 .selectAll{
     cursor: pointer;
 }
+.form-check{
+    font-size: 20px ;
+}
